@@ -4,16 +4,16 @@ from utils.data_preparation.prepare_time_series import prepare_time_series_data
 from utils.ensemble.ensemble_forecast import ensemble_forecast
 from utils.ensemble.plot_ensemble_forecast import plot_ensemble_forecast
 
-from utils.prediction.vehicle_prediction import run_prediction_for_vehicle
+from utils.prediction.ensemble_prediction import run_prediction_for_vehicle
 
+from config import DATA_CSV_FILE
 
-# Example usage
 if __name__ == "__main__":
     # Path to your data
-    data_path = "/home/tjselevani/Desktop/Apps/vscode/python/python analysis/data/last-3-months-transactions.csv"
+    data_path = DATA_CSV_FILE
 
     # Vehicle to analyze
-    vehicle_id = "SM055"
+    vehicle_id = "SM024"
 
     # Run prediction for the vehicle
     forecasts = run_prediction_for_vehicle(data_path, vehicle_id, forecast_days=30)

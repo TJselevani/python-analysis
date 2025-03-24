@@ -44,6 +44,6 @@ def plot_ensemble_forecast(historical_data, ensemble_df, vehicle_id):
     plt.grid(True)
 
     plt.tight_layout()
-    f1 = os.path.join(FILES_DIR, f"ensemble_forecast_{vehicle_id}.png")
+    f1 = os.path.join(FILES_DIR, f"{vehicle_id}/forecast/ensemble_forecast.png")
     plt.savefig(f1, dpi=300)
     plt.show()

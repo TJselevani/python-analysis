@@ -1,33 +1,32 @@
-from utils.data_preparation.prepare_time_series import prepare_prophet_time_series_data
-from utils.data_analysis.plot_time_series import plot_prophet_time_series_analysis
-from utils.model.prophet.train import train_prophet_model
-from utils.model.prophet.plot import plot_prophet_forecast
+import pandas as pd
 
 
-def predict_vehicle_earnings(data, vehicle_id, resample_freq="D", forecast_days=30):
+def forecast_future_prophet(prophet_forecast, ts_data, forecast_days):
     """
-    End-to-end function to predict earnings for a specific vehicle.
+    Forecast future values using the trained ARIMA model.
 
     Parameters:
-    - data: DataFrame with transaction data
-    - vehicle_id: ID of the vehicle to analyze
-    - resample_freq: Frequency to resample data ('D' for daily, 'H' for hourly)
-    - forecast_days: Number of days to forecast into the future
+    - model: Trained Prophet model
+    - ts_data: Time series data
+    - forecast_days: Number of days to forecast
 
     Returns:
-    - forecast: DataFrame with the forecasted values
+    - DataFrame with forecasted values
     """
-    # Prepare the data
-    earnings_df = prepare_prophet_time_series_data(data, vehicle_id, resample_freq)
+    try:
+        forecast = prophet_forecast
 
-    # Analyze the time series
-    plot_prophet_time_series_analysis(earnings_df, vehicle_id)
+        # Create date range for future dates
+        last_date = ts_data.index[-1]
+        future_dates = pd.date_range(
+            start=last_date + pd.Timedelta(days=1), periods=forecast_days
+        )
 
-    # Train the model and get forecast
-    model, forecast = train_prophet_model(earnings_df, forecast_days)
+        # Create DataFrame with forecasted values
+        forecast_df = pd.DataFrame({"date": future_dates, "earnings": forecast})
 
-    # Plot the forecast
-    plot_prophet_forecast(model, forecast, vehicle_id)
+        return forecast_df
 
-    # Return the forecast
-    return forecast
+    except Exception as e:
+        print(f"Error forecasting with PROPHET: {e}")
+        return None

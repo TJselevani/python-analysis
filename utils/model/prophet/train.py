@@ -14,7 +14,7 @@ def train_prophet_model(data, forecast_days=30):
     - forecast: Forecast DataFrame
     """
     # Initialize and train the model
-    model = Prophet(
+    prophet_model = Prophet(
         yearly_seasonality=True,
         weekly_seasonality=True,
         daily_seasonality=True,
@@ -23,15 +23,15 @@ def train_prophet_model(data, forecast_days=30):
     )
 
     # Add custom seasonality for weekday vs weekend
-    model.add_seasonality(name="weekday_weekend", period=7, fourier_order=3)
+    prophet_model.add_seasonality(name="weekday_weekend", period=7, fourier_order=3)
 
     # Fit the model
-    model.fit(data)
+    prophet_model.fit(data)
 
     # Create a dataframe for future predictions
-    future = model.make_future_dataframe(periods=forecast_days)
+    future = prophet_model.make_future_dataframe(periods=forecast_days)
 
     # Make predictions
-    forecast = model.predict(future)
+    prophet_forecast = prophet_model.predict(future)
 
-    return model, forecast
+    return prophet_model, prophet_forecast
