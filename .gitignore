@@ -1,5 +1,36 @@
-testing
-old_files
-MAIN
-venv
+# Ignore the virtual environment
+venv/
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore Jupyter hidden files
+.jupyter/
+
+# Ignore compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore the `testing` directory
+testing/
+
+# Ignore `old_files` if it exists
+old_files/
+
+# Ignore `MAIN` if it's a file or directory
+MAIN/
+
+# Ignore data files
 data.txt
+
+# Ignore log files and temporary files
+*.log
+*.tmp
+*.swp
+
+# Ignore environment and dependency files
+.env
+*.env
+.DS_Store

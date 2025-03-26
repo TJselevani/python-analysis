@@ -14,6 +14,12 @@ def plot_forecast(historical_data, forecast_df, vehicle_id, model_type):
     - vehicle_id: Vehicle ID for title
     - model_type: Type of model used (ML, ARIMA, etc.)
     """
+    # Define directory paths
+    forecast_save_dir = os.path.join(FILES_DIR, vehicle_id, "forecast")
+
+    # Ensure directories exist
+    os.makedirs(forecast_save_dir, exist_ok=True)
+
     plt.figure(figsize=(16, 12))
 
     # Plot historical data
@@ -32,9 +38,9 @@ def plot_forecast(historical_data, forecast_df, vehicle_id, model_type):
     plt.grid(True)
 
     plt.tight_layout()
-    save_dir = f"{vehicle_id}/forecast/{model_type.lower()}_forecast.png"
-    f1 = os.path.join(FILES_DIR, save_dir)
-    plt.savefig(f1, dpi=300)
+    plt.savefig(
+        os.path.join(forecast_save_dir, f"{model_type.lower()}_forecast.png"), dpi=300
+    )
     plt.show()
 
 
@@ -47,6 +53,14 @@ def plot_prophet_forecast(historical_data, model, forecast, vehicle_id, model_ty
     - forecast: Forecast DataFrame from Prophet
     - vehicle_id: Vehicle ID for the title
     """
+    # Define directory paths
+    analysis_save_dir = os.path.join(FILES_DIR, vehicle_id, "analysis")
+    forecast_save_dir = os.path.join(FILES_DIR, vehicle_id, "forecast")
+
+    # Ensure directories exist
+    os.makedirs(analysis_save_dir, exist_ok=True)
+    os.makedirs(forecast_save_dir, exist_ok=True)
+
     plt.figure(figsize=(16, 12))
 
     # Plot the forecast
@@ -58,10 +72,9 @@ def plot_prophet_forecast(historical_data, model, forecast, vehicle_id, model_ty
     plt.grid(True)
 
     plt.tight_layout()
-    f1 = os.path.join(
-        FILES_DIR, f"{vehicle_id}/forecast/{model_type.lower()}_forecast.png"
+    plt.savefig(
+        os.path.join(forecast_save_dir, f"{model_type.lower()}_forecast.png"), dpi=300
     )
-    plt.savefig(f1, dpi=300)
     plt.show()
 
     # Plot the components of the forecast
@@ -73,7 +86,5 @@ def plot_prophet_forecast(historical_data, model, forecast, vehicle_id, model_ty
     plt.grid(True)
 
     plt.tight_layout()
-    save_dir = f"{vehicle_id}/analysis/time_series_components.png"
-    f1 = os.path.join(FILES_DIR, save_dir)
-    plt.savefig(f1, dpi=300)
+    plt.savefig(os.path.join(analysis_save_dir, "time_series_components.png"), dpi=300)
     plt.show()

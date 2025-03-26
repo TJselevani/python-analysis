@@ -12,6 +12,12 @@ def plot_time_series_analysis(ts_data, vehicle_id):
     - ts_data: Time series data
     - vehicle_id: Vehicle ID for title
     """
+    # Define directory paths
+    save_dir = os.path.join(FILES_DIR, vehicle_id, "analysis")
+
+    # Ensure directories exist
+    os.makedirs(save_dir, exist_ok=True)
+
     plt.figure(figsize=(14, 12))
 
     # Plot the original time series
@@ -46,11 +52,7 @@ def plot_time_series_analysis(ts_data, vehicle_id):
         plt.grid(True)
 
         plt.tight_layout()
-        save_dir = f"{vehicle_id}/analysis/time_series_decomposition.png"
-        f1 = os.path.join(FILES_DIR, save_dir)
-        plt.savefig(f1, dpi=300)
+        plt.savefig(os.path.join(save_dir, "time_series_decomposition.png"), dpi=300)
 
     plt.tight_layout()
-    save_dir = f"{vehicle_id}/analysis/time_series_analysis.png"
-    f2 = os.path.join(FILES_DIR, save_dir)
-    plt.savefig(f2, dpi=300)
+    plt.savefig(os.path.join(save_dir, "time_series_analysis.png"), dpi=300)

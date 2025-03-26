@@ -11,3 +11,12 @@ FILES_DIR = os.path.join(PROJECT_ROOT, "files")
 
 # Define paths to important files
 DATA_CSV_FILE = os.path.join(DATA_DIR, "last-3-months-transactions.csv")
+
+"""
+VEHICLES
+- sm192
+- sm944
+- sm055
+- sm191
+- sm024
+"""
