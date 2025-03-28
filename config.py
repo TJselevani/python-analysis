@@ -9,6 +9,8 @@ DATA_DIR = os.path.join(PROJECT_ROOT, "data")
 
 FILES_DIR = os.path.join(PROJECT_ROOT, "files")
 
+JSON_DIR = os.path.join(PROJECT_ROOT, "json")
+
 # Define paths to important files
 DATA_CSV_FILE = os.path.join(DATA_DIR, "last-3-months-transactions.csv")
 

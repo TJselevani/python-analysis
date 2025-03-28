@@ -109,6 +109,8 @@ A list of required dependencies is available in `requirements.txt`. The major de
 - `prophet`
 - `plotly`
 - `jupyter`
+- `fastapi`
+- `uvicorn`
 
 ## License
 
