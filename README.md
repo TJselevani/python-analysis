@@ -103,12 +103,13 @@ A list of required dependencies is available in `requirements.txt`. The major de
 - `pandas`
 - `numpy`
 - `matplotlib`
-- `seaborn`
 - `scikit-learn`
 - `statsmodels`
 - `prophet`
 - `plotly`
 - `jupyter`
+- `fastapi`
+- `uvicorn`
 
 ## License
 

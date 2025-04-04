@@ -6,6 +6,7 @@ from utils.data_preparation.prepare_time_series import (
 from utils.data_preparation.prepare_features import prepare_features
 
 from utils.data_analysis.plot_time_series import plot_time_series_analysis
+
 from utils.model.ml.train import train_ml_model
 from utils.model.evaluate_model import evaluate_model
 from utils.model.arima.train import train_arima_model
@@ -47,6 +48,9 @@ def run_prediction_for_vehicle(data_path, vehicle_id, forecast_days=30):
 
     # Prepare features for ML model
     features_df = prepare_features(ts_data)
+    print("\n***** Features *******\n")
+    print(prepare_features(ts_data).dtypes)
+    print("\n***** Features *******\n")
 
     # Train ML model
     ml_model, X_train, X_test, y_train, y_test = train_ml_model(features_df)
