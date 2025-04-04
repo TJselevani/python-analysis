@@ -20,9 +20,7 @@ testing/
 files/
 json/
 old_files/
-scripts
-files
-json
+scripts/
 
 # Ignore `MAIN` if it's a file or directory
 MAIN/
