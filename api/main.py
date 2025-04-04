@@ -2,6 +2,7 @@
 
 import os
 import sys
+import logging
 
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
@@ -11,9 +12,15 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from api.notebook.convert import convert_notebooks
 
-convert_notebooks()
+# convert_notebooks()
 
 from api.routers import day_api, forecast_api  # Import your routers
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
