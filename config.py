@@ -11,6 +11,10 @@ FILES_DIR = os.path.join(PROJECT_ROOT, "files")
 
 JSON_DIR = os.path.join(PROJECT_ROOT, "json")
 
+NOTEBOOKS_DIR = os.path.join(PROJECT_ROOT, "eda2")
+
+SCRIPTS_DIR = os.path.join(PROJECT_ROOT, "scripts")
+
 # Define paths to important files
 DATA_CSV_FILE = os.path.join(DATA_DIR, "last-3-months-transactions.csv")
 

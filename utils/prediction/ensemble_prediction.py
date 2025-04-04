@@ -48,6 +48,9 @@ def run_prediction_for_vehicle(data_path, vehicle_id, forecast_days=30):
 
     # Prepare features for ML model
     features_df = prepare_features(ts_data)
+    print("\n***** Features *******\n")
+    print(prepare_features(ts_data).dtypes)
+    print("\n***** Features *******\n")
 
     # Train ML model
     ml_model, X_train, X_test, y_train, y_test = train_ml_model(features_df)

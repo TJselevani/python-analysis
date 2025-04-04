@@ -19,10 +19,6 @@ def plot_time_series_analysis(ts_data, vehicle_id):
     save_dir = os.path.join(FILES_DIR, vehicle_id, "analysis")
     os.makedirs(save_dir, exist_ok=True)
 
-    # Define JSON directory paths
-    save_dir = os.path.join(JSON_DIR, vehicle_id, "analysis")
-    os.makedirs(save_dir, exist_ok=True)
-
     """
     Save PNG time series analysis
     """
@@ -68,6 +64,9 @@ def plot_time_series_analysis(ts_data, vehicle_id):
     """
     Save JSON time series analysis
     """
+    # Define JSON directory paths
+    json_save_dir = os.path.join(JSON_DIR, vehicle_id, "analysis")
+    os.makedirs(json_save_dir, exist_ok=True)
 
     # Create a main figure for the original time series
     fig_main = go.Figure()
@@ -131,13 +130,13 @@ def plot_time_series_analysis(ts_data, vehicle_id):
         )
 
         # Add decomposition chart to JSON output
-        json_output["time_series_decomposition"] = json.loads(
+        json_output["time_series_decomposition.json"] = json.loads(
             fig_decomposition.to_json()
         )
 
     # Save JSON file
-    json_path = os.path.join(save_dir, "time_series_analysis.json")
+    json_path = os.path.join(json_save_dir, "time_series_analysis.json")
     with open(json_path, "w") as f:
         json.dump(json_output, f, indent=4)
 
-    print(f"Plotly JSON saved at: {json_path}")
+    print(f"Time series analysis Plotly JSON saved at: {json_path}")

@@ -16,8 +16,13 @@ __pycache__/
 # Ignore the `testing` directory
 testing/
 
-# Ignore `old_files` if it exists
+# Ignore `files` if it exists
+files/
+json/
 old_files/
+scripts
+files
+json
 
 # Ignore `MAIN` if it's a file or directory
 MAIN/
