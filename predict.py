@@ -8,7 +8,7 @@ from utility.prediction.ensemble_prediction import run_prediction_for_vehicle
 from config import DATA_CSV_FILE
 
 
-def run(vehicle_id="SM191", forecast_days=30):
+def run_prediction(vehicle_id, forecast_days=30):
     """triggers analysis and prediction of data based on a vehicle"""
 
     # Path to your data
@@ -35,7 +35,7 @@ def run(vehicle_id="SM191", forecast_days=30):
     print(f"Average daily earnings: {average_daily:.2f} KSH")
 
 
-def run_prediction(vehicle_id="SM191", forecast_days=30):
+def run_pred(vehicle_id, forecast_days=30):
     """
     Triggers analysis and prediction of data based on a vehicle,
     and returns forecast + summary info.
@@ -73,5 +73,4 @@ def run_prediction(vehicle_id="SM191", forecast_days=30):
 
 
 if __name__ == "__main__":
-    """main function"""
-    run_prediction(vehicle_id="SM191", forecast_days=30)
+    run_prediction(vehicle_id="SM192", forecast_days=30)

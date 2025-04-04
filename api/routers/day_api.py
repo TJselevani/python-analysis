@@ -1,20 +1,20 @@
 # flake8: noqa E501
+# flake8: noqa C0413
 """ignore line limits"""
 
 import os
 import sys
 import json
 import asyncio
-import aiofiles
 import logging
+import aiofiles
+
 from datetime import datetime
-from fastapi import FastAPI
 from fastapi import APIRouter, HTTPException, Query
 
 # Add project root to sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from api.utils import log_and_handle_file_generation
 from config import JSON_DIR
 from scripts.day import (
     generate_day_earnings_with_scatter_bundle_plotly,
@@ -27,10 +27,6 @@ from scripts.day import (
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api/v1/eda/day", tags=["Day Analysis"])
-
-logger.info(f"JSON_DIR resolved to: {JSON_DIR}")
-
 
 """
 Utility Functions
@@ -41,19 +37,18 @@ def validate_date(date: str):
     """validates the format of the day string"""
     try:
         datetime.strptime(date, "%Y-%m-%d")
-    except ValueError as exc:  # Capture the exception as `exc`
+    except ValueError as exc:
         raise HTTPException(
             status_code=400, detail="Invalid date format. Use YYYY-MM-DD."
-        ) from exc  # Explicitly re-raise from the original exception
+        ) from exc
 
 
 async def generate_plot_json_async(
     file_path: str, generate_method: callable, *args, **kwargs
 ):
-    logger.info(f"Checking if file exists: {file_path}")
-
+    """returns the json file if available and generates it if missing"""
     if not os.path.exists(file_path):
-        logger.info(
+        logger.debug(
             f"File not found. Generating file using method: {generate_method.__name__}"
         )
         try:
@@ -67,7 +62,7 @@ async def generate_plot_json_async(
         logger.info("Waiting for file to be created...")
         for _ in range(20):  # Wait for 2 seconds max
             if os.path.exists(file_path):
-                logger.info(f"File found after waiting: {file_path}")
+                logger.debug(f"File found after waiting: {file_path}")
                 break
             await asyncio.sleep(0.1)
 
@@ -80,42 +75,28 @@ async def generate_plot_json_async(
     try:
         async with aiofiles.open(file_path, mode="r", encoding="utf-8") as f:
             content = await f.read()
-            logger.info(f"Successfully read file: {file_path}")
             return json.loads(content)
     except Exception as e:
         logger.exception(f"Failed to read generated file: {file_path}")
-        raise HTTPException(status_code=500, detail=f"Error reading JSON file: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Error reading JSON file: {e}"
+        ) from e
 
 
-def generate_plot_json(file_path: str, generate_method: callable, *args, **kwargs):
-    """Checks if the file exists, and if not, generates it by calling the respective method."""
-    if not os.path.exists(file_path):
-        # Call the method to generate the file
-        generate_method(*args, **kwargs)
-        print(f"Generated {file_path}")
-    with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
-app = FastAPI()
+router = APIRouter(prefix="/api/v1/eda/day", tags=["Day Analysis"])
 
 """
 Day Analysis Endpoints
 """
 
 
-@app.get("/sc_bundle")
-@log_and_handle_file_generation
+@router.get("/sc_bundle")
 async def get_scatter_eda(
     date: str,
     vehicle_id: str = Query(
         None, description="Vehicle ID to filter results, leave empty for all vehicles"
     ),
 ):
-    logger.info(
-        f"Received request for /sc_bundle with date={date}, vehicle_id={vehicle_id}"
-    )
-
     validate_date(date)
 
     if vehicle_id:
@@ -126,7 +107,6 @@ async def get_scatter_eda(
             "day",
             f"day_scatter_earnings_{vehicle_id}_{date}.json",
         )
-        logger.info(f"Target file path for specific vehicle: {file}")
 
         def generate_day_eda_method():
             logger.info(
@@ -138,7 +118,6 @@ async def get_scatter_eda(
 
     else:
         file = os.path.join(JSON_DIR, "all", "day", f"day_scatter_earnings_{date}.json")
-        logger.info(f"Target file path for all vehicles: {file}")
 
         def generate_day_eda_method():
             logger.info("Calling generate_day_earnings_with_scatter_bundle_plotly...")
@@ -154,10 +133,10 @@ async def get_scatter_eda(
         logger.exception("Exception occurred while generating day analysis.")
         raise HTTPException(
             status_code=500, detail=f"Error generating day analysis: {e}"
-        )
+        ) from e
 
 
-@app.get("/hr_bundle")
+@router.get("/hr_bundle")
 async def get_hour_eda(
     date: str,
     vehicle_id: str = Query(
@@ -201,7 +180,7 @@ async def get_hour_eda(
         ) from e
 
 
-@app.get("/wk_bundle")
+@router.get("/wk_bundle")
 async def get_week_eda(
     date: str,
     vehicle_id: str = Query(
@@ -245,7 +224,7 @@ async def get_week_eda(
         ) from e
 
 
-@app.get("/trend")
+@router.get("/trend")
 async def get_trend_eda(
     vehicle_id: str = Query(
         None, description="Vehicle ID to filter results, leave empty for all vehicles"

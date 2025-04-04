@@ -8,35 +8,28 @@ import logging
 import asyncio
 import aiofiles
 
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException
 
 # Add project root to sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from config import JSON_DIR
-from prediction import run_prediction
+from predict import run_prediction
 
 router = APIRouter(prefix="/api/v1/forecast", tags=["Forecast"])
 
 logger = logging.getLogger(__name__)
-
-app = FastAPI()
-
-logger.info(f"JSON_DIR resolved to: {JSON_DIR}")
 
 """
 Forecast Analysis Endpoint
 """
 
 
-@app.get("/{vehicle_id}/{model_type}")
+@router.get("/{vehicle_id}/{model_type}")
 async def get_forecast(vehicle_id: str, model_type: str):
     """
     Serve the forecast figure for a given vehicle and model type.
     """
-
-    # Run sync prediction function in a thread to avoid blocking the event loop
-    await asyncio.to_thread(run_prediction, vehicle_id=vehicle_id)
 
     forecast_path = os.path.join(
         JSON_DIR,
@@ -48,6 +41,10 @@ async def get_forecast(vehicle_id: str, model_type: str):
     print(f" Path: {forecast_path}")
 
     if not os.path.exists(forecast_path):
+        # Run sync prediction function in a thread to avoid blocking the event loop
+        await asyncio.to_thread(run_prediction, vehicle_id=vehicle_id)
+
+    if not os.path.exists(forecast_path):
         raise HTTPException(status_code=404, detail="Forecast not found")
 
     # Read JSON file asynchronously
@@ -56,7 +53,7 @@ async def get_forecast(vehicle_id: str, model_type: str):
         return json.loads(content)
 
 
-@app.get("/info/{vehicle_id}/{model_type}")
+@router.get("/info/{vehicle_id}/{model_type}")
 async def get_forecast_info(vehicle_id: str, model_type: str):
     """
     Serve the forecast figure + summary info for a given vehicle and model type.

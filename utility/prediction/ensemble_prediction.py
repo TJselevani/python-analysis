@@ -1,21 +1,21 @@
 import pandas as pd
-from utils.data_preparation.prepare_time_series import (
+from utility.data_preparation.prepare_time_series import (
     prepare_time_series_data,
     prepare_prophet_time_series_data,
 )
-from utils.data_preparation.prepare_features import prepare_features
+from utility.data_preparation.prepare_features import prepare_features
 
-from utils.data_analysis.plot_time_series import plot_time_series_analysis
+from utility.data_analysis.plot_time_series import plot_time_series_analysis
 
-from utils.model.ml.train import train_ml_model
-from utils.model.evaluate_model import evaluate_model
-from utils.model.arima.train import train_arima_model
-from utils.model.sarima.train import train_sarima_model
-from utils.model.prophet.train import train_prophet_model
+from utility.model.ml.train import train_ml_model
+from utility.model.evaluate_model import evaluate_model
+from utility.model.arima.train import train_arima_model
+from utility.model.sarima.train import train_sarima_model
+from utility.model.prophet.train import train_prophet_model
 
-from utils.forecast.create_forecast_ml import forecast_future_ml
-from utils.forecast.create_forecast_arima import forecast_future_arima
-from utils.forecast.plot_forecast import plot_forecast, plot_prophet_forecast
+from utility.forecast.create_forecast_ml import forecast_future_ml
+from utility.forecast.create_forecast_arima import forecast_future_arima
+from utility.forecast.plot_forecast import plot_forecast, plot_prophet_forecast
 
 
 def run_prediction_for_vehicle(data_path, vehicle_id, forecast_days=30):
@@ -48,9 +48,9 @@ def run_prediction_for_vehicle(data_path, vehicle_id, forecast_days=30):
 
     # Prepare features for ML model
     features_df = prepare_features(ts_data)
-    print("\n***** Features *******\n")
-    print(prepare_features(ts_data).dtypes)
-    print("\n***** Features *******\n")
+    # print("\n***** Features *******\n")
+    # print(prepare_features(ts_data).dtypes)
+    # print("\n***** Features *******\n")
 
     # Train ML model
     ml_model, X_train, X_test, y_train, y_test = train_ml_model(features_df)

@@ -21,6 +21,7 @@ files/
 json/
 old_files/
 scripts/
+logs/
 
 # Ignore `MAIN` if it's a file or directory
 MAIN/
