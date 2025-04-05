@@ -38,3 +38,4 @@ data.txt
 .env
 *.env
 .DS_Store
+.vscode

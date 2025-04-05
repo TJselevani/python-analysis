@@ -15,7 +15,9 @@ def plot_time_series_analysis(ts_data, vehicle_id):
     """
     # Define JSON directory paths
     json_save_dir = os.path.join(JSON_DIR, vehicle_id, "analysis")
+    dec_save_dir = os.path.join(JSON_DIR, vehicle_id, "decomposition")
     os.makedirs(json_save_dir, exist_ok=True)
+    os.makedirs(dec_save_dir, exist_ok=True)
 
     # Create main figure for original time series
     fig_main = go.Figure()
@@ -39,19 +41,20 @@ def plot_time_series_analysis(ts_data, vehicle_id):
     # Time series decomposition
     decomposition = analyze_time_series(ts_data)
     if decomposition:
-        fig_decomp = go.Figure()
+        fig_decomposition = go.Figure()
 
-        fig_decomp.add_trace(
+        # COMBINED decomposition
+        fig_decomposition.add_trace(
             go.Scatter(
                 x=ts_data.index, y=decomposition.observed, mode="lines", name="Observed"
             )
         )
-        fig_decomp.add_trace(
+        fig_decomposition.add_trace(
             go.Scatter(
                 x=ts_data.index, y=decomposition.trend, mode="lines", name="Trend"
             )
         )
-        fig_decomp.add_trace(
+        fig_decomposition.add_trace(
             go.Scatter(
                 x=ts_data.index,
                 y=decomposition.seasonal,
@@ -59,173 +62,125 @@ def plot_time_series_analysis(ts_data, vehicle_id):
                 name="Seasonality",
             )
         )
-        fig_decomp.add_trace(
+        fig_decomposition.add_trace(
             go.Scatter(
                 x=ts_data.index, y=decomposition.resid, mode="lines", name="Residuals"
             )
         )
-        fig_decomp.update_layout(
+        fig_decomposition.update_layout(
             title="Time Series Decomposition",
             xaxis_title="Date",
             yaxis_title="Value",
             template="plotly_dark",
         )
 
-        # fig_decomp.show()
+        # fig_decomposition.show()
+        decomposition_output = {
+            "decomposition": json.loads(fig_decomposition.to_json())
+        }
+        path = os.path.join(json_save_dir, "time_series_decomposition.json")
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(decomposition_output, f, indent=4)
+        print(f"Analysis Decomposition JSON saved at: {path}")
 
-        json_output["time_series_decomposition"] = json.loads(fig_decomp.to_json())
+        # OBSERVED
+        fig_observed = go.Figure()
+
+        fig_observed.add_trace(
+            go.Scatter(
+                x=ts_data.index, y=decomposition.observed, mode="lines", name="Observed"
+            )
+        )
+
+        fig_observed.update_layout(
+            title="Time Series Decomposition (Observed)",
+            xaxis_title="Date",
+            yaxis_title="Value",
+            template="plotly_dark",
+        )
+
+        observed_output = {"decomposition_observed": json.loads(fig_observed.to_json())}
+        path = os.path.join(dec_save_dir, "observed.json")
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(observed_output, f, indent=4)
+        print(f"Observed Decomposition JSON saved at: {path}")
+
+        # TREND
+        fig_trend = go.Figure()
+
+        fig_trend.add_trace(
+            go.Scatter(
+                x=ts_data.index, y=decomposition.trend, mode="lines", name="Trend"
+            )
+        )
+
+        fig_trend.update_layout(
+            title="Time Series Decomposition (Trend)",
+            xaxis_title="Date",
+            yaxis_title="Value",
+            template="plotly_dark",
+        )
+
+        trend_output = {"decomposition_trend": json.loads(fig_trend.to_json())}
+        path = os.path.join(dec_save_dir, "trend.json")
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(trend_output, f, indent=4)
+        print(f"Trend Decomposition JSON saved at: {path}")
+
+        # RESIDUALS
+        fig_residual = go.Figure()
+
+        fig_residual.add_trace(
+            go.Scatter(
+                x=ts_data.index, y=decomposition.resid, mode="lines", name="Residuals"
+            )
+        )
+
+        fig_residual.update_layout(
+            title="Time Series Decomposition (Residuals)",
+            xaxis_title="Date",
+            yaxis_title="Value",
+            template="plotly_dark",
+        )
+
+        residual_output = {
+            "decomposition_residuals": json.loads(fig_residual.to_json())
+        }
+        path = os.path.join(dec_save_dir, "residuals.json")
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(residual_output, f, indent=4)
+        print(f"Residuals Decomposition JSON saved at: {path}")
+
+        # SEASONALITY
+        fig_seasonal = go.Figure()
+
+        fig_seasonal.add_trace(
+            go.Scatter(
+                x=ts_data.index,
+                y=decomposition.seasonal,
+                mode="lines",
+                name="Seasonality",
+            )
+        )
+
+        fig_seasonal.update_layout(
+            title="Time Series Decomposition (Residuals)",
+            xaxis_title="Date",
+            yaxis_title="Value",
+            template="plotly_dark",
+        )
+
+        seasonal_output = {
+            "decomposition_seasonality": json.loads(fig_seasonal.to_json())
+        }
+        path = os.path.join(dec_save_dir, "seasonality.json")
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(seasonal_output, f, indent=4)
+        print(f"Seasonality Decomposition JSON saved at: {path}")
 
     # Save as JSON
     json_path = os.path.join(json_save_dir, "time_series_analysis.json")
-    with open(json_path, "w") as f:
+    with open(json_path, "w", encoding="utf-8") as f:
         json.dump(json_output, f, indent=4)
 
-    print(f"Plotly time series JSON saved at: {json_path}")
-
-
-# import os
-# import json
-# import matplotlib.pyplot as plt
-# from config import FILES_DIR, JSON_DIR
-# from utility.data_analysis.analyze_time_series import analyze_time_series
-# import plotly.graph_objects as go
-
-
-# def plot_time_series_analysis(ts_data, vehicle_id):
-#     """
-#     Plot the time series data and its components.
-#     Generate Plotly time series analysis and save it as JSON.
-
-#     Parameters:
-#     - ts_data: Time series data
-#     - vehicle_id: Vehicle ID for title
-#     """
-#     # Define directory paths
-#     save_dir = os.path.join(FILES_DIR, vehicle_id, "analysis")
-#     os.makedirs(save_dir, exist_ok=True)
-
-#     """
-#     Save PNG time series analysis
-#     """
-#     plt.figure(figsize=(14, 12))
-
-#     # Plot the original time series
-#     plt.subplot(2, 1, 1)
-#     plt.plot(ts_data.index, ts_data.values)
-#     plt.title(f"Time Series Analysis on Daily Earnings for Vehicle {vehicle_id}")
-#     plt.ylabel("Amount (KSH)")
-#     plt.grid(True)
-
-#     # Try to plot the decomposition if we have enough data
-#     decomposition = analyze_time_series(ts_data)
-#     if decomposition:
-#         plt.figure(figsize=(16, 12))
-#         plt.subplot(4, 1, 1)
-#         plt.plot(decomposition.observed)
-#         plt.title("Observed")
-#         plt.grid(True)
-
-#         plt.subplot(4, 1, 2)
-#         plt.plot(decomposition.trend)
-#         plt.title("Trend")
-#         plt.grid(True)
-
-#         plt.subplot(4, 1, 3)
-#         plt.plot(decomposition.seasonal)
-#         plt.title("Seasonality")
-#         plt.grid(True)
-
-#         plt.subplot(4, 1, 4)
-#         plt.plot(decomposition.resid)
-#         plt.title("Residuals")
-#         plt.grid(True)
-
-#         plt.tight_layout()
-#         plt.savefig(os.path.join(save_dir, "time_series_decomposition.png"), dpi=300)
-#         plt.close()
-
-#     plt.tight_layout()
-#     plt.savefig(os.path.join(save_dir, "time_series_analysis.png"), dpi=300)
-#     plt.close()
-
-#     print(f"Time series analysis Image saved at: {save_dir}/time_series_analysis.png")
-
-#     """
-#     Save JSON time series analysis
-#     """
-
-#     # Create a main figure for the original time series
-#     fig_main = go.Figure()
-#     fig_main.add_trace(
-#         go.Scatter(
-#             x=ts_data.index, y=ts_data.values, mode="lines", name="Daily Earnings"
-#         )
-#     )
-
-#     fig_main.update_layout(
-#         title=f"Time Series Analysis on Daily Earnings for Vehicle {vehicle_id}",
-#         xaxis_title="Date",
-#         yaxis_title="Amount (KSH)",
-#         template="plotly_dark",
-#     )
-
-#     # Initialize JSON output
-#     json_output = {"time_series_analysis": json.loads(fig_main.to_json())}
-
-#     # Try to analyze the time series decomposition
-#     decomposition = analyze_time_series(ts_data)
-#     if decomposition:
-#         fig_decomposition = go.Figure()
-
-#         # Observed
-#         fig_decomposition.add_trace(
-#             go.Scatter(
-#                 x=ts_data.index, y=decomposition.observed, mode="lines", name="Observed"
-#             )
-#         )
-
-#         # Trend
-#         fig_decomposition.add_trace(
-#             go.Scatter(
-#                 x=ts_data.index, y=decomposition.trend, mode="lines", name="Trend"
-#             )
-#         )
-
-#         # Seasonality
-#         fig_decomposition.add_trace(
-#             go.Scatter(
-#                 x=ts_data.index,
-#                 y=decomposition.seasonal,
-#                 mode="lines",
-#                 name="Seasonality",
-#             )
-#         )
-
-#         # Residuals
-#         fig_decomposition.add_trace(
-#             go.Scatter(
-#                 x=ts_data.index, y=decomposition.resid, mode="lines", name="Residuals"
-#             )
-#         )
-
-#         fig_decomposition.update_layout(
-#             title="Time Series Decomposition",
-#             xaxis_title="Date",
-#             yaxis_title="Value",
-#             template="plotly_dark",
-#         )
-
-#         # Add decomposition chart to JSON output
-#         json_output["time_series_decomposition.json"] = json.loads(
-#             fig_decomposition.to_json()
-#         )
-
-#     # Save JSON file
-#     # Define JSON directory paths
-#     json_save_dir = os.path.join(JSON_DIR, vehicle_id, "analysis")
-#     os.makedirs(json_save_dir, exist_ok=True)
-#     json_path = os.path.join(json_save_dir, "time_series_analysis.json")
-#     with open(json_path, "w") as f:
-#         json.dump(json_output, f, indent=4)
-
-#     print(f"Time series analysis Plotly JSON saved at: {json_path}")
+    print(f"Time Series Analysis JSON saved at: {json_path}")

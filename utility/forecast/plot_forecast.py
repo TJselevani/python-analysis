@@ -84,7 +84,7 @@ def plot_forecast(historical_data, forecast_df, vehicle_id, model_type):
     with open(json_file_path, "w") as json_file:
         json.dump(fig_json, json_file, indent=4)
 
-    print(f"Plotly JSON saved at: {json_file_path}")
+    print(f"{model_type} Plotly forecast JSON saved at: {json_file_path}")
     # return fig_json
 
 
@@ -167,12 +167,12 @@ def plot_prophet_forecast(historical_data, model, forecast, vehicle_id, model_ty
 
     # Save Plotly chart as JSON
     plotly_json = fig.to_plotly_json()
-    with open(
-        os.path.join(
-            forecast_json_save_dir, f"{model_type.lower()}_forecast_plot.json"
-        ),
-        "w",
-        encoding="utf-8",
-    ) as f:
+
+    json_file_path = os.path.join(
+        forecast_json_save_dir, f"{model_type.lower()}_forecast.json"
+    )
+    with open(json_file_path, "w", encoding="utf-8") as f:
         json.dump(plotly_json, f, indent=4, cls=PlotlyJSONEncoder)
+
+    print(f"{model_type} Plotly forecast JSON saved at: {json_file_path}")
     # return forecast_json  # Optionally return JSON data
