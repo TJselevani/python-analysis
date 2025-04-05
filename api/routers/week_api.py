@@ -70,7 +70,7 @@ Endpoints
 """
 
 
-@router.get("/trend/line")
+@router.get("/li_bundle")
 async def get_weekly_earnings_line_eda(
     vehicle_id: str = Query(
         None, description="Vehicle ID to filter results, leave empty for all vehicles"
@@ -83,13 +83,11 @@ async def get_weekly_earnings_line_eda(
             vehicle_id,
             "eda",
             "week",
-            f"weekly_earnings_trend_line_{vehicle_id}.json",
+            "weekly_earnings_trend_line.json",
         )
 
         def generate_method():
-            plot_weekly_fares_line_x1(
-                vehicle_id, f"weekly_earnings_trend_line_{vehicle_id}"
-            )
+            plot_weekly_fares_line_x1(vehicle_id, "weekly_earnings_trend_line")
 
     else:
         file = os.path.join(JSON_DIR, "all", "week", "weekly_earnings_trend_line.json")
@@ -100,7 +98,7 @@ async def get_weekly_earnings_line_eda(
     return await generate_plot_json_async(file, generate_method)
 
 
-@router.get("/trend/bar")
+@router.get("/br_bundle")
 async def get_weekly_earnings_bar_eda(
     vehicle_id: str = Query(
         None, description="Vehicle ID to filter results, leave empty for all vehicles"
@@ -130,7 +128,18 @@ async def get_weekly_earnings_bar_eda(
     return await generate_plot_json_async(file, generate_method)
 
 
-@router.get("/revenue")
+@router.get("/wk_bundle")
+async def get_week_eda():
+    """Combined view showing weekly breakdown by vehicle."""
+    file = os.path.join(JSON_DIR, "all", "week", "week_bundled_earnings.json")
+
+    def generate_method():
+        plot_weekly_breakdown_by_vehicle("_week_bundled_earnings")
+
+    return await generate_plot_json_async(file, generate_method)
+
+
+@router.get("/trend")
 async def get_weekly_total_eda(
     bar: str = Query(
         None,
@@ -149,16 +158,5 @@ async def get_weekly_total_eda(
 
         def generate_method():
             plot_weekly_total_revenue_line("weekly_total_earnings_line")
-
-    return await generate_plot_json_async(file, generate_method)
-
-
-@router.get("/wk_bundle")
-async def get_week_eda():
-    """Combined view showing weekly breakdown by vehicle."""
-    file = os.path.join(JSON_DIR, "all", "week", "week_bundled_earnings.json")
-
-    def generate_method():
-        plot_weekly_breakdown_by_vehicle("_week_bundled_earnings")
 
     return await generate_plot_json_async(file, generate_method)

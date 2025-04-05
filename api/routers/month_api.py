@@ -132,7 +132,18 @@ async def get_monthly_earnings_bar_eda(
     return await generate_plot_json_async(file, generate_method)
 
 
-@router.get("/revenue")
+@router.get("/mt_bundle")
+async def get_month_eda():
+    """Combined view showing monthly breakdown by vehicle."""
+    file = os.path.join(JSON_DIR, "all", "month", "monthly_bundled_earnings.json")
+
+    def generate_method():
+        plot_monthly_breakdown_by_vehicle("monthly_bundled_earnings")
+
+    return await generate_plot_json_async(file, generate_method)
+
+
+@router.get("/trend")
 async def get_monthly_total_eda(
     bar: str = Query(
         None,
@@ -153,16 +164,5 @@ async def get_monthly_total_eda(
 
         def generate_method():
             plot_monthly_total_revenue_line("monthly_total_earnings_line")
-
-    return await generate_plot_json_async(file, generate_method)
-
-
-@router.get("/mt_bundle")
-async def get_month_eda():
-    """Combined view showing monthly breakdown by vehicle."""
-    file = os.path.join(JSON_DIR, "all", "month", "monthly_bundled_earnings.json")
-
-    def generate_method():
-        plot_monthly_breakdown_by_vehicle("monthly_bundled_earnings")
 
     return await generate_plot_json_async(file, generate_method)

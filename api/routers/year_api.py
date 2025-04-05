@@ -33,7 +33,9 @@ Utility Function
 """
 
 
-async def generate_plot_json_async(file_path: str, generate_method: callable, *args, **kwargs):
+async def generate_plot_json_async(
+    file_path: str, generate_method: callable, *args, **kwargs
+):
     """Asynchronously return JSON file or generate and wait if not found."""
     if not os.path.exists(file_path):
         logger.debug(f"File not found, generating via: {generate_method.__name__}")
@@ -41,7 +43,9 @@ async def generate_plot_json_async(file_path: str, generate_method: callable, *a
             await asyncio.to_thread(generate_method, *args, **kwargs)
         except Exception as e:
             logger.exception("Plot generation failed:")
-            raise HTTPException(status_code=500, detail=f"Generation failed: {e}") from e
+            raise HTTPException(
+                status_code=500, detail=f"Generation failed: {e}"
+            ) from e
 
         logger.info("Waiting for file creation...")
         for _ in range(20):  # Max wait: 2 seconds
@@ -66,16 +70,27 @@ Endpoints
 """
 
 
-@router.get("/trend/line")
+@router.get("/li_bundle")
 async def get_yearly_earnings_line_eda(
-    vehicle_id: str = Query(None, description="Vehicle ID to filter results, leave empty for all vehicles"),
+    vehicle_id: str = Query(
+        None, description="Vehicle ID to filter results, leave empty for all vehicles"
+    ),
 ):
     """Yearly line graph analysis."""
     if vehicle_id:
-        file = os.path.join(JSON_DIR, vehicle_id, "eda", "year", f"yearly_earnings_trend_line_{vehicle_id}.json")
+        file = os.path.join(
+            JSON_DIR,
+            vehicle_id,
+            "eda",
+            "year",
+            f"yearly_earnings_trend_line_{vehicle_id}.json",
+        )
 
         def generate_method():
-            plot_yearly_fares_line_x1(vehicle_id, f"yearly_earnings_trend_line_{vehicle_id}")
+            plot_yearly_fares_line_x1(
+                vehicle_id, f"yearly_earnings_trend_line_{vehicle_id}"
+            )
+
     else:
         file = os.path.join(JSON_DIR, "all", "year", "yearly_earnings_trend_line.json")
 
@@ -85,40 +100,32 @@ async def get_yearly_earnings_line_eda(
     return await generate_plot_json_async(file, generate_method)
 
 
-@router.get("/trend/bar")
+@router.get("/br_bundle")
 async def get_yearly_earnings_bar_eda(
-    vehicle_id: str = Query(None, description="Vehicle ID to filter results, leave empty for all vehicles"),
+    vehicle_id: str = Query(
+        None, description="Vehicle ID to filter results, leave empty for all vehicles"
+    ),
 ):
     """Yearly bar graph analysis."""
     if vehicle_id:
-        file = os.path.join(JSON_DIR, vehicle_id, "eda", "year", f"yearly_earnings_trend_bar_{vehicle_id}.json")
+        file = os.path.join(
+            JSON_DIR,
+            vehicle_id,
+            "eda",
+            "year",
+            f"yearly_earnings_trend_bar_{vehicle_id}.json",
+        )
 
         def generate_method():
-            plot_yearly_fares_bar_x1(vehicle_id, f"yearly_earnings_trend_bar_{vehicle_id}")
+            plot_yearly_fares_bar_x1(
+                vehicle_id, f"yearly_earnings_trend_bar_{vehicle_id}"
+            )
+
     else:
         file = os.path.join(JSON_DIR, "all", "year", "yearly_earnings_trend_bar.json")
 
         def generate_method():
             plot_yearly_fares_bar("yearly_earnings_trend_bar")
-
-    return await generate_plot_json_async(file, generate_method)
-
-
-@router.get("/revenue")
-async def get_yearly_total_eda(
-    bar: str = Query(None, description="Include ?bar=true to get bar chart, otherwise line chart"),
-):
-    """Total yearly earnings overview (bar or line)."""
-    if bar:
-        file = os.path.join(JSON_DIR, "all", "year", "yearly_total_earnings_bar.json")
-
-        def generate_method():
-            plot_yearly_total_revenue_bar("yearly_total_earnings_bar")
-    else:
-        file = os.path.join(JSON_DIR, "all", "year", "yearly_total_earnings_line.json")
-
-        def generate_method():
-            plot_yearly_total_revenue_line("yearly_total_earnings_line")
 
     return await generate_plot_json_async(file, generate_method)
 
@@ -130,5 +137,27 @@ async def get_yearly_eda():
 
     def generate_method():
         plot_yearly_breakdown_by_vehicle("yearly_bundled_earnings")
+
+    return await generate_plot_json_async(file, generate_method)
+
+
+@router.get("/trend")
+async def get_yearly_total_eda(
+    bar: str = Query(
+        None, description="Include ?bar=true to get bar chart, otherwise line chart"
+    ),
+):
+    """Total yearly earnings overview (bar or line)."""
+    if bar:
+        file = os.path.join(JSON_DIR, "all", "year", "yearly_total_earnings_bar.json")
+
+        def generate_method():
+            plot_yearly_total_revenue_bar("yearly_total_earnings_bar")
+
+    else:
+        file = os.path.join(JSON_DIR, "all", "year", "yearly_total_earnings_line.json")
+
+        def generate_method():
+            plot_yearly_total_revenue_line("yearly_total_earnings_line")
 
     return await generate_plot_json_async(file, generate_method)

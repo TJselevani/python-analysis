@@ -1,5 +1,4 @@
 # flake8: noqa E501
-# flake8: noqa C0413
 """ignore line limits"""
 
 import os
@@ -20,6 +19,7 @@ from scripts.day import (
     generate_day_earnings_with_scatter_bundle_plotly,
     generate_day_earnings_with_scatter_bundle_plotly_x1,
     generate_day_earnings_with_hourly_bundle_plotly,
+    generate_day_earnings_with_scatter_bundle_plotly_x1,
     generate_day_earnings_with_week_bundle_plotly,
     generate_fare_trends_plotly,
     generate_fare_trends_plotly_x1,
@@ -48,7 +48,7 @@ async def generate_plot_json_async(
 ):
     """returns the json file if available and generates it if missing"""
     if not os.path.exists(file_path):
-        logger.debug(
+        logger.info(
             f"File not found. Generating file using method: {generate_method.__name__}"
         )
         try:
@@ -62,7 +62,7 @@ async def generate_plot_json_async(
         logger.info("Waiting for file to be created...")
         for _ in range(20):  # Wait for 2 seconds max
             if os.path.exists(file_path):
-                logger.debug(f"File found after waiting: {file_path}")
+                logger.info(f"File found after waiting: {file_path}")
                 break
             await asyncio.sleep(0.1)
 
@@ -100,33 +100,37 @@ async def get_scatter_eda(
     validate_date(date)
 
     if vehicle_id:
-        file = os.path.join(
+        scatter_file = os.path.join(
             JSON_DIR,
             vehicle_id,
             "eda",
             "day",
-            f"day_scatter_earnings_{vehicle_id}_{date}.json",
+            f"day_scatter_earnings_{date}.json",
         )
 
-        def generate_day_eda_method():
+        def generate_day_sc_eda_method():
             logger.info(
                 "Calling generate_day_earnings_with_scatter_bundle_plotly_x1..."
             )
             generate_day_earnings_with_scatter_bundle_plotly_x1(
-                date, vehicle_id, f"day_scatter_earnings_{vehicle_id}_{date}"
+                date, vehicle_id, "day_scatter_earnings"
             )
 
     else:
-        file = os.path.join(JSON_DIR, "all", "day", f"day_scatter_earnings_{date}.json")
+        scatter_file = os.path.join(
+            JSON_DIR, "all", "day", f"day_scatter_earnings_{date}.json"
+        )
 
-        def generate_day_eda_method():
+        def generate_day_sc_eda_method():
             logger.info("Calling generate_day_earnings_with_scatter_bundle_plotly...")
             generate_day_earnings_with_scatter_bundle_plotly(
-                date, f"day_scatter_earnings_{date}"
+                date, "day_scatter_earnings"
             )
 
     try:
-        response = await generate_plot_json_async(file, generate_day_eda_method)
+        response = await generate_plot_json_async(
+            scatter_file, generate_day_sc_eda_method
+        )
         logger.info("Response successfully generated and returned.")
         return response
     except Exception as e:
@@ -153,27 +157,33 @@ async def get_hour_eda(
     validate_date(date)
 
     if vehicle_id:
-        file = os.path.join(
+        hr_file = os.path.join(
             JSON_DIR, vehicle_id, "eda", "day", f"day_hour_bundled_earnings_{date}.json"
         )
 
-        def generate_day_eda_method():
+        def generate_day_hr_eda_method():
+            logger.info(
+                "Calling generate_day_earnings_with_hourly_bundle_plotly with vehicle_id..."
+            )
             generate_day_earnings_with_hourly_bundle_plotly(
-                date, f"day_hour_bundled_earnings_{date}"
+                date, "day_hour_bundled_earnings"
             )
 
     else:
-        file = os.path.join(
+        hr_file = os.path.join(
             JSON_DIR, "all", "day", f"day_hour_bundled_earnings_{date}.json"
         )
 
-        def generate_day_eda_method():
+        def generate_day_hr_eda_method():
+            logger.info("Calling generate_day_earnings_with_hourly_bundle_plotly...")
             generate_day_earnings_with_hourly_bundle_plotly(
-                date, f"day_hour_bundled_earnings_{date}"
+                date, "day_hour_bundled_earnings"
             )
 
     try:
-        return await generate_plot_json_async(file, generate_day_eda_method)
+        response = await generate_plot_json_async(hr_file, generate_day_hr_eda_method)
+        logger.info("Response successfully generated and returned.")
+        return response
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Error generating day - hour analysis: {e}"
@@ -197,27 +207,27 @@ async def get_week_eda(
     validate_date(date)
 
     if vehicle_id:
-        file = os.path.join(
+        wk_file = os.path.join(
             JSON_DIR, vehicle_id, "eda", "day", f"day_week_bundled_earnings_{date}.json"
         )
 
-        def generate_day_eda_method():
+        def generate_day_wk_eda_method():
             generate_day_earnings_with_week_bundle_plotly(
-                date, f"day_week_bundled_earnings_{date}"
+                date, "day_week_bundled_earnings"
             )
 
     else:
-        file = os.path.join(
+        wk_file = os.path.join(
             JSON_DIR, "all", "day", f"day_week_bundled_earnings_{date}.json"
         )
 
-        def generate_day_eda_method():
+        def generate_day_wk_eda_method():
             generate_day_earnings_with_week_bundle_plotly(
-                f"{date}", f"day_week_bundled_earnings_{date}"
+                date, "day_week_bundled_earnings"
             )
 
     try:
-        return await generate_plot_json_async(file, generate_day_eda_method)
+        return await generate_plot_json_async(wk_file, generate_day_wk_eda_method)
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Error generating day - week analysis: {e}"
@@ -237,21 +247,21 @@ async def get_trend_eda(
     """
 
     if vehicle_id:
-        file = os.path.join(
+        tr_file = os.path.join(
             JSON_DIR, vehicle_id, "eda", "day", "daily_fare_trends.json"
         )
 
-        def generate_day_eda_method():
+        def generate_day_tr_eda_method():
             generate_fare_trends_plotly_x1(vehicle_id, "daily_fare_trends")
 
     else:
-        file = os.path.join(JSON_DIR, "all", "day", "daily_fare_trends.json")
+        tr_file = os.path.join(JSON_DIR, "all", "day", "daily_fare_trends.json")
 
-        def generate_day_eda_method():
+        def generate_day_tr_eda_method():
             generate_fare_trends_plotly("daily_fare_trends")
 
     try:
-        return await generate_plot_json_async(file, generate_day_eda_method)
+        return await generate_plot_json_async(tr_file, generate_day_tr_eda_method)
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Error generating day trend analysis: {e}"

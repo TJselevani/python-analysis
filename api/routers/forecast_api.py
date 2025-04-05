@@ -85,7 +85,7 @@ Decomposition Endpoint
 """
 
 
-@router.get("/decomposition/{vehicle_id}")
+@router.get("/decomposition")
 async def get_decomposition_data(
     vehicle_id: str,
     component: str = Query(..., enum=["observed", "trend", "seasonality", "residuals"]),
@@ -97,9 +97,7 @@ async def get_decomposition_data(
     """
     file_path = os.path.join(JSON_DIR, vehicle_id, "decomposition", f"{component}.json")
 
-    return await load_or_generate_json(
-        file_path, run_prediction, vehicle_id=vehicle_id
-    )
+    return await load_or_generate_json(file_path, run_prediction, vehicle_id=vehicle_id)
 
     # if not os.path.exists(file_path):
     #     raise HTTPException(

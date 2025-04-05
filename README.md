@@ -11,7 +11,8 @@ This repository contains a machine learning project for time series analysis and
     - [2. Create a Virtual Environment](#2-create-a-virtual-environment)
     - [3. Install Dependencies](#3-install-dependencies)
   - [Project Structure](#project-structure)
-  - [Usage](#usage)
+  - [Running the FastAPI app](#running-the-fastapi-app)
+  - [Alternative Usage](#alternative-usage)
   - [Exploratory Data Analysis (EDA)](#exploratory-data-analysis-eda)
   - [Dependencies](#dependencies)
   - [License](#license)
@@ -44,15 +45,16 @@ pip install -r requirements.txt
 ```
 ├── config.py                 # Configuration file
 ├── data/                     # Directory containing raw data
-├── eda/                      # Jupyter notebooks for EDA
+├── eda2/                      # Jupyter notebooks for EDA
 │   ├── day.ipynb
 │   ├── week.ipynb
 │   ├── month.ipynb
 │   ├── year.ipynb
-├── files/                    # Directory for storing analysis files
-├── main.py                    # Main script for running forecasting
-├── main.ipynb                 # Jupyter notebook version of the main script
-├── utils/                     # Helper functions
+├── files/                     # Directory for storing analysis files
+├── json/                      # Directory for storing analysis JSON files
+├── predict.py                 # Main script for running forecasting
+├── predict.ipynb              # Jupyter notebook version of the predict script
+├── utility/                     # Helper functions
 │   ├── data_preparation/
 │   │   ├── prepare_time_series.py
 │   ├── ensemble/
@@ -64,12 +66,34 @@ pip install -r requirements.txt
 ├── README.md                  # Project documentation
 ```
 
-## Usage
+## Running the FastAPI app
 
-To run the time series forecasting analysis, execute the `main.py` script:
+To run the fast api app, navigate to the `api/` directory and execute the `main.py` script
 
 ```sh
+cd api
 python main.py
+```
+
+This script:
+
+1. Converts the jupyter notebooks into python scripts
+2. Starts the FastAPI application running on port 8000
+3. Now you can send requests to the grouped endpoints
+
+Day Endpoints: http://0.0.0.0:8000/api/v1/day ('/sc_bundle', '/hr_bundle', '/wk_bundke', '/trend')
+Week Endpoints: http://0.0.0.0:8000/api/v1/week ('/li_bundle', '/br_bundle', '/wk_bundke', '/trend')
+Month Endpoints: http://0.0.0.0:8000/api/v1/month ('/li_bundle', '/br_bundle', '/mt_bundke', '/trend')
+Year Endpoints: http://0.0.0.0:8000/api/v1/year ('/li_bundle', '/br_bundle', '/yr_bundke', '/trend')
+
+Analysis Endpoints: http://0.0.0.0:8000/api/v1/forecast ('/', '/info', '/decomposition')
+
+## Alternative Usage
+
+To run the time series forecasting analysis, execute the `predict.py` script:
+
+```sh
+python predict.py
 ```
 
 This script:
@@ -81,7 +105,7 @@ This script:
 
 ## Exploratory Data Analysis (EDA)
 
-The `eda/` directory contains Jupyter notebooks for data visualization:
+The `eda/` and `eda2/` directory contains Jupyter notebooks for data visualization:
 
 - `day.ipynb`: Analysis at the daily level.
 - `week.ipynb`: Weekly trends.
@@ -94,7 +118,7 @@ To run the EDA notebooks:
 jupyter notebook
 ```
 
-Then open the desired notebook from the `eda/` directory.
+Then open the desired notebook from the `eda/` or `eda2/` directory.
 
 ## Dependencies
 

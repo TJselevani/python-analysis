@@ -12,16 +12,22 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from api.notebook.convert import convert_notebooks
 from logging_config import setup_logging
 
-# convert_notebooks()
+convert_notebooks()
 setup_logging()
 
-from api.routers import day_api, forecast_api  # Import your routers
+from api.routers import (
+    day_api,
+    week_api,
+    month_api,
+    year_api,
+    forecast_api,
+)
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Replace with frontend URL for better security
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,6 +35,9 @@ app.add_middleware(
 
 # Include routers
 app.include_router(day_api.router)
+app.include_router(week_api.router)
+app.include_router(month_api.router)
+app.include_router(year_api.router)
 app.include_router(forecast_api.router)
 
 
