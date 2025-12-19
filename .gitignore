@@ -23,6 +23,7 @@ old_files/
 scripts
 files
 json
+models/
 
 # Ignore `MAIN` if it's a file or directory
 MAIN/

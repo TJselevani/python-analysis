@@ -1,22 +1,24 @@
 import os
+from pydantic_settings import SettingsConfigDict, BaseSettings
 
-# Determine the project root directory
-# Assuming this script is in the root of your project
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-# Construct an absolute path to the data directory
-DATA_DIR = os.path.join(PROJECT_ROOT, "data")
+class Settings(BaseSettings):
+    # Determine the project root directory dynamically
+    PROJECT_ROOT: str = os.path.dirname(os.path.abspath(__file__))
 
-FILES_DIR = os.path.join(PROJECT_ROOT, "files")
+    # Construct absolute paths to important directories
+    DATA_DIR: str = os.path.join(PROJECT_ROOT, "data")
+    FILES_DIR: str = os.path.join(PROJECT_ROOT, "files")
+    JSON_DIR: str = os.path.join(PROJECT_ROOT, "json")
+    MODELS_DIR: str = os.path.join(PROJECT_ROOT, "models")
 
-JSON_DIR = os.path.join(PROJECT_ROOT, "json")
+    # Define paths to important files
+    DATA_CSV_FILE: str = os.path.join(DATA_DIR, "last-3-months-transactions.csv")
 
-NOTEBOOKS_DIR = os.path.join(PROJECT_ROOT, "eda2")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-SCRIPTS_DIR = os.path.join(PROJECT_ROOT, "scripts")
 
-# Define paths to important files
-DATA_CSV_FILE = os.path.join(DATA_DIR, "last-3-months-transactions.csv")
+settings = Settings()
 
 """
 VEHICLES
